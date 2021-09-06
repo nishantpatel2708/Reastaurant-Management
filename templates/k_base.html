@@ -48,7 +48,7 @@ The above copyright notice and this permission notice shall be included in all c
         <ul class="nav">
           <li class="nav-item active  ">
             <a class="nav-link" href="{% url 'kitchen:t_order' %}">
-              <i class="material-icons">dashboard</i>
+              <i class="material-icons"></i>
               <p>Today's Order</p>
             </a>
           </li>
@@ -57,16 +57,16 @@ The above copyright notice and this permission notice shall be included in all c
 
             <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#setting-dropdown3" aria-expanded="false" aria-controls="setting-dropdown">
-              <i class="material-icons">category</i>
+              <i class="material-icons"></i>
               <span class="menu-title">CATEGORIES<b class="caret"></b></span>
             </a>
             <div class="collapse" id="setting-dropdown3" style="">
               <ul class="nav flex-column sub-menu">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'kitchen:add_category' %}"><i class="material-icons">add_box</i>ADD CATEGORIES</a>
+                        <a class="nav-link" href="{% url 'kitchen:add_category' %}"><i class="material-icons"></i>ADD CATEGORIES</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'kitchen:cat_list' %}"><i class="material-icons">list_alt</i>MANAGE CATEGORIES</a>
+                        <a class="nav-link" href="{% url 'kitchen:cat_list' %}"><i class="material-icons"></i>MANAGE CATEGORIES</a>
                     </li>
 
                 </ul>
@@ -75,52 +75,32 @@ The above copyright notice and this permission notice shall be included in all c
 
             <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#setting-dropdown4" aria-expanded="false" aria-controls="setting-dropdown">
-              <i class="material-icons">restaurant_menu_two_tone</i>
+              <i class="material-icons"></i>
               <span class="menu-title">MENU<b class="caret"></b></span>
             </a>
             <div class="collapse" id="setting-dropdown4" style="">
               <ul class="nav flex-column sub-menu">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'kitchen:add_menu' %}"><i class="material-icons">add_box</i>ADD MENU</a>
+                        <a class="nav-link" href="{% url 'kitchen:add_menu' %}"><i class="material-icons"></i>ADD MENU</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'kitchen:menu_list' %}"><i class="material-icons">list_alt</i>MANAGE MENU</a>
+                        <a class="nav-link" href="{% url 'kitchen:menu_list' %}"><i class="material-icons"></i>MANAGE MENU</a>
                     </li>
 
                 </ul>
                 </div>
           </li>
-<!--
-            <li class="nav-item">
-            <a class="nav-link" data-toggle="collapse" href="#setting-dropdown5" aria-expanded="false" aria-controls="setting-dropdown">
-              <i class="material-icons">layers</i>
-              <span class="menu-title">Orders<b class="caret"></b></span>
-            </a>
-            <div class="collapse" id="setting-dropdown5" style="">
-              <ul class="nav flex-column sub-menu">
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'kitchen:t_order' %}"><i class="material-icons">list_alt</i>Today's Orders</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'kitchen:orders' %}"><i class="material-icons">list_alt</i>Orders List</a>
-                    </li>
-
-                </ul>
-                </div>
-          </li>
-          -->
 
           <li class="nav-item ">
             <a class="nav-link" href="{% url 'kitchen:user_d' %}">
-              <i class="material-icons">person</i>
+              <i class="material-icons"></i>
               <p>User Profile</p>
             </a>
           </li>
 
           <li class="nav-item ">
-            <a class="nav-link" href="{% url 'rest_admin:emp_logout' %}">
-              <i class="material-icons">power_settings_new</i>
+            <a class="nav-link" href="{% url 'accounts:user_logout' %}">
+              <i class="material-icons"></i>
               <p>LOGOUT</p>
             </a>
           </li>

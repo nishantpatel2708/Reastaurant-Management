@@ -58,23 +58,28 @@ def user_login(request):
 
                 login(request, user)
 
-                return HttpResponseRedirect(reverse('manager:index'))
-            elif user.is_active and user.is_employee:
+                return HttpResponseRedirect(reverse('manager:table_view'))
+            elif user.is_active and user.is_employee and user.Category == 'chef':
 
                 login(request, user)
 
-                return HttpResponseRedirect(reverse('rest_admin:table_view'))
+                return HttpResponseRedirect(reverse('kitchen:table_view'))
+            elif user.is_active and user.is_employee and user.Category == 'waiter':
+
+                login(request, user)
+
+                return HttpResponseRedirect(reverse('waiter:table_view'))
 
             else:
 
                 messages.error(request, "Invalid login details supplied.")
-                return redirect('rest_admin:login')
+                return redirect('accounts:login')
         else:
             print("Someone tried to login and failed.")
             print("They used username: {} and password: {}".format(
                 username, password))
             messages.error(request, "Invalid login details supplied.")
-            return redirect('rest_admin:login')
+            return redirect('accounts:login')
 
     else:
         # Nothing has been provided for username or password.
