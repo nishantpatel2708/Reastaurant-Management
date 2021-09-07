@@ -516,7 +516,14 @@ def manage_day_expenses(request):
 def edit_expenses(request, id):
 
     data = Expenses.objects.get(id=id)
-    return render(request, 'rest_admin/manage_month_expenses.html', {'data': data})
+    form = RestaurantForm(request.POST or None, instance=data)
+
+    if form.is_valid():
+        form.save()
+        return redirect('rest_admin:user_profile')
+    else:
+        print(form.errors)
+    return render(request, 'rest_admin/update_u.html', {'form': form, 'restro': restro})
 
 
 def update_details(request, id):
