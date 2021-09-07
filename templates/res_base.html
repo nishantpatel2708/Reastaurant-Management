@@ -259,11 +259,11 @@
               <div class="collapse" id="setting-dropdown10">
                 <ul class="nav flex-column sub-menu">
                   <li class="nav-item">
-                    <a class="nav-link" href="{% url 'rest_admin:add_day_expenses' %}"><i class="material-icons">add_box</i>ADD
+                    <a class="nav-link" href="{% url 'rest_admin:add_day_expenses' %}"><i class="material-icons">add_box</i>
                       Add Expenses</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="{% url 'rest_admin:manage_day_expenses' %}"><i class="material-icons">list_alt</i>MANAGE
+                    <a class="nav-link" href="{% url 'rest_admin:manage_day_expenses' %}"><i class="material-icons">list_alt</i>
                       Expenses</a>
                   </li>
                 </ul>
@@ -283,6 +283,27 @@
                 <i class="material-icons">account_balance_wallet</i>
                 <p>Add Month Expenses</p>
               </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="collapse" href="#setting-dropdown20" aria-expanded="false"
+                aria-controls="setting-dropdown">
+                <i class="material-icons">group</i>
+                <span class="menu-title">Month Expenses<b class="caret"></b></span>
+              </a>
+              <div class="collapse" id="setting-dropdown20">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'rest_admin:add_month_expenses' %}"><i class="material-icons">add_box</i>
+                      Add Month Expenses</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'rest_admin:manage_month_expenses' %}"><i class="material-icons">list_alt</i>
+                      Month Expenses</a>
+                  </li>
+                </ul>
+              </div>
+            
             </li>
 
             <li class="nav-item">
