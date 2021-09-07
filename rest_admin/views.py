@@ -515,12 +515,30 @@ def add_month_expenses(request):
     res = User.objects.get(id=request.user.id)
     if request.method == 'POST':
         form = PerMonthExpensesForm(request.POST, request.FILES)
+
+        my_list = []
         
+        month = PerMonthExpenses.objects.all()
+        for i in month:
+            m = i.Date.month
+            y = i.Date.year
+            my = f'{m},{y}'
+            my_list.append(my)
+
+
         if form.is_valid():
             form_r = form.save(commit=False)
-            form_r.res = res
-            form_r.save()
-            return redirect('rest_admin:manage_month_expenses')
+            print("formmm", form_r.Date.month)
+
+            for date in my_list:
+                if f'{form_r.Date.month},{form_r.Date.year}' == date:
+                    messages.success(request, f"You already Entered {form_r.Date.month},{form_r.Date.year}'s Expenses.")
+                    return redirect('rest_admin:add_month_expenses')
+
+            else:
+                form_r.res = res
+                form_r.save()
+                return redirect('rest_admin:manage_month_expenses')
         else:
             print(form.errors)
     else:
@@ -534,3 +552,18 @@ def manage_month_expenses(request):
     return render(request, 'rest_admin/manage_month_expenses.html', {'data': data})
 
 
+def edit_month_expenses(request, id):
+
+    restro = User.objects.get(id=request.user.id)
+    instance = get_object_or_404(PerMonthExpenses, id=id)
+
+    form = EditMonthExpensesForm(request.POST or None, instance=instance)
+
+    if form.is_valid():
+        form.save()
+        return redirect('rest_admin:manage_month_expenses')
+
+    else:
+        print(form.errors)
+
+    return render(request, 'rest_admin/edit_month_expenses.html', {'form': form, 'restro': restro})

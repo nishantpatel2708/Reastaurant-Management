@@ -53,6 +53,7 @@ urlpatterns = [
 
     path('add_month_expenses/', views.add_month_expenses, name='add_month_expenses'),
     path('manage_month_expenses/', views.manage_month_expenses, name='manage_month_expenses'),
+    path('edit_month_expenses/<int:id>', views.edit_month_expenses, name='edit_month_expenses'),
     
 
 

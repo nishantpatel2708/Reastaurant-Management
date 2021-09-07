@@ -238,3 +238,23 @@ class PerMonthExpensesForm(forms.ModelForm):
                 'type': 'datetime-local'
             }),
         }
+
+
+class EditMonthExpensesForm(forms.ModelForm):
+    
+    class Meta:
+        model = PerMonthExpenses
+        fields = '__all__'
+        exclude = ('res', 'Date')
+
+        widgets = {
+            'Rent': forms.TextInput(attrs={
+                'class': 'form-control',
+            }),
+            'Light_Bill': forms.TextInput(attrs={
+                'class': 'form-control',
+            }),
+            'Others': forms.TextInput(attrs={
+                'class': 'form-control',
+            }),
+        }
