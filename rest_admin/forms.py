@@ -177,3 +177,47 @@ class ComForm(forms.ModelForm):
     class Meta:
         model = OrderItem
         fields = ['comment']
+
+
+class ExpensesForm(forms.ModelForm):
+    
+    class Meta:
+        model = Expenses
+        fields = '__all__'
+        exclude = ('res', )
+
+        widgets = {
+            'Day_Expense': forms.TextInput(attrs={
+                'class': 'form-control',
+            }),
+            'Date': forms.DateTimeInput(attrs={
+                'class': 'form-control ',
+                'type': 'datetime-local'
+            }),
+            'Others': forms.TextInput(attrs={
+                'class': 'form-control',
+            }),
+        }
+
+
+class PerMonthExpensesForm(forms.ModelForm):
+    
+    class Meta:
+        model = PerMonthExpenses
+        fields = '__all__'
+        exclude = ('res', )
+        widgets = {
+            'Rent': forms.TextInput(attrs={
+                'class': 'form-control',
+            }),
+            'Light_Bill': forms.TextInput(attrs={
+                'class': 'form-control',
+            }),
+            'Others': forms.TextInput(attrs={
+                'class': 'form-control',
+            }),
+            'Date': forms.DateTimeInput(attrs={
+                'class': 'form-control ',
+                'type': 'datetime-local'
+            }),
+        }

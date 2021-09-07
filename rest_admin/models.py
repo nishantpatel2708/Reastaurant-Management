@@ -78,3 +78,24 @@ class MenuTable(models.Model):
 
     def __str__(self):
         return f"{self.Dish_Name} of {self.res.restaurant_name}"
+
+
+class Expenses(models.Model):
+    res = models.ForeignKey(User, on_delete=models.CASCADE)
+    Day_Expense = models.PositiveIntegerField()
+    Date = models.DateTimeField()
+    Others = models.PositiveIntegerField(null=True, blank=True)
+
+    def __str__(self):
+        return self.res.restaurant_name
+
+
+class PerMonthExpenses(models.Model):
+    res = models.ForeignKey(User, on_delete=models.CASCADE)
+    Rent = models.PositiveIntegerField(null=True, blank=True)
+    Light_Bill = models.PositiveIntegerField(null=True, blank=True)
+    Others = models.PositiveIntegerField(null=True, blank=True)
+    Date = models.DateTimeField()
+
+    def __str__(self):
+        return self.res.restaurant_name

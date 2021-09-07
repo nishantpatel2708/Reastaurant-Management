@@ -264,7 +264,7 @@ def t_price(request):
     order_list2 = OrderItem.objects.filter(table_no__rest_id=res.id, ordered=True,
                                            date__year=datetime.datetime.today().year,
                                            date__month=datetime.datetime.today().month)
-    total_emp = User.objects.filter(id=request.user.id)
+    total_emp = User.objects.filter(rest_id=request.user, is_employee=True)
     total_earn = OrderItem.objects.filter(
         table_no__rest_id=res.id, ordered=True)
     total = 0
@@ -418,8 +418,6 @@ def add_manager(request):
     res = User.objects.get(id=request.user.id)
     if request.method == 'POST':
         form = EmployeeForm(request.POST, request.FILES)
-        print(request.FILES)
-
         if form.is_valid():
 
             form_r = form.save(commit=False)
@@ -473,3 +471,64 @@ def manager_form_edit(request, id):
 def manager_delete(request, id):
     user2 = User.objects.get(id=id).delete()
     return HttpResponseRedirect(reverse('rest_admin:manager_list'))
+
+
+def add_day_expenses(request):
+    res = User.objects.get(id=request.user.id)
+    if request.method == 'POST':
+        form = ExpensesForm(request.POST, request.FILES)
+        
+        if form.is_valid():
+            form_r = form.save(commit=False)
+            form_r.res = res
+            form_r.save()
+            return redirect('rest_admin:table_view')
+        else:
+            print(form.errors)
+    else:
+        form = ExpensesForm()
+    return render(request, 'rest_admin/add_day_expenses.html', {'form': form})
+
+
+def add_month_expenses(request):
+    res = User.objects.get(id=request.user.id)
+    if request.method == 'POST':
+        form = PerMonthExpensesForm(request.POST, request.FILES)
+        
+        if form.is_valid():
+            form_r = form.save(commit=False)
+            form_r.res = res
+            form_r.save()
+            return redirect('rest_admin:table_view')
+        else:
+            print(form.errors)
+    else:
+        form = PerMonthExpensesForm()
+    return render(request, 'rest_admin/add_month_expenses.html', {'form': form})
+
+
+def manage_day_expenses(request):
+    data = Expenses.objects.all()
+
+    return render(request, 'rest_admin/manage_month_expenses.html', {'data': data})
+
+
+def edit_expenses(request, id):
+
+    data = Expenses.objects.get(id=id)
+    return render(request, 'rest_admin/manage_month_expenses.html', {'data': data})
+
+
+def update_details(request, id):
+    restro = User.objects.get(id=request.user.id)
+    res = User.objects.get(id=request.user.id)
+    instance = get_object_or_404(User, id=res.id)
+
+    form = RestaurantForm(request.POST or None, instance=instance)
+
+    if form.is_valid():
+        form.save()
+        return redirect('rest_admin:user_profile')
+    else:
+        print(form.errors)
+    return render(request, 'rest_admin/update_u.html', {'form': form, 'restro': restro})

@@ -77,7 +77,7 @@
                 <i class="material-icons">layers</i>
                 <span class="menu-title">Orders<b class="caret"></b></span>
               </a>
-              <div class="collapse" id="setting-dropdown6" style="">
+              <div class="collapse" id="setting-dropdown6">
                 <ul class="nav flex-column sub-menu">
                   <li class="nav-item">
                     <a class="nav-link" href="{% url 'rest_admin:t_order' %}"
@@ -104,7 +104,7 @@
                 <i class="material-icons">content_paste</i>
                 <span class="menu-title">TABLE<b class="caret"></b></span>
               </a>
-              <div class="collapse" id="setting-dropdown5" style="">
+              <div class="collapse" id="setting-dropdown5" >
                 <ul class="nav flex-column sub-menu">
                   <li class="nav-item">
                     <a class="nav-link" href="{% url 'rest_admin:qr' %}"
@@ -136,7 +136,7 @@
                 <i class="material-icons">category</i>
                 <span class="menu-title">CATEGORIES<b class="caret"></b></span>
               </a>
-              <div class="collapse" id="setting-dropdown3" style="">
+              <div class="collapse" id="setting-dropdown3" >
                 <ul class="nav flex-column sub-menu">
                   <li class="nav-item">
                     <a
@@ -167,7 +167,7 @@
                 <i class="material-icons">category</i>
                 <span class="menu-title">Manager<b class="caret"></b></span>
               </a>
-              <div class="collapse" id="setting-dropdown8" style="">
+              <div class="collapse" id="setting-dropdown8" >
                 <ul class="nav flex-column sub-menu">
                   <li class="nav-item">
                     <a
@@ -197,7 +197,7 @@
                 <i class="material-icons">restaurant_menu_two_tone</i>
                 <span class="menu-title">MENU<b class="caret"></b></span>
               </a>
-              <div class="collapse" id="setting-dropdown4" style="">
+              <div class="collapse" id="setting-dropdown4" >
                 <ul class="nav flex-column sub-menu">
                   <li class="nav-item">
                     <a class="nav-link" href="{% url 'rest_admin:add_menu' %}"
@@ -224,7 +224,7 @@
                 <i class="material-icons">group</i>
                 <span class="menu-title">EMPLOYEE<b class="caret"></b></span>
               </a>
-              <div class="collapse" id="setting-dropdown2" style="">
+              <div class="collapse" id="setting-dropdown2" >
                 <ul class="nav flex-column sub-menu">
                   <li class="nav-item">
                     <a
@@ -240,13 +240,51 @@
                   </li>
                 </ul>
               </div>
+            
             </li>
+
+            <!-- <li class="nav-item">
+              <a class="nav-link" href="{% url 'rest_admin:add_day_expenses' %}">
+                <i class="material-icons">account_balance_wallet</i>
+                <p>Expenses</p>
+              </a>
+            </li> -->
+
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="collapse" href="#setting-dropdown10" aria-expanded="false"
+                aria-controls="setting-dropdown">
+                <i class="material-icons">group</i>
+                <span class="menu-title">Expenses<b class="caret"></b></span>
+              </a>
+              <div class="collapse" id="setting-dropdown10">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'rest_admin:add_day_expenses' %}"><i class="material-icons">add_box</i>ADD
+                      Add Expenses</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'rest_admin:manage_day_expenses' %}"><i class="material-icons">list_alt</i>MANAGE
+                      Expenses</a>
+                  </li>
+                </ul>
+              </div>
+            
+            </li>
+
             <li class="nav-item">
               <a class="nav-link" href="{% url 'rest_admin:t_price' %}">
                 <i class="material-icons">store</i>
                 <p>Restaurants Info</p>
               </a>
             </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'rest_admin:add_month_expenses' %}">
+                <i class="material-icons">account_balance_wallet</i>
+                <p>Add Month Expenses</p>
+              </a>
+            </li>
+
             <li class="nav-item">
               <a class="nav-link" href="{% url 'rest_admin:user_profile' %}">
                 <i class="material-icons">person</i>
