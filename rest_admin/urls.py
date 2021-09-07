@@ -48,9 +48,12 @@ urlpatterns = [
     path('manager_delete/<int:id>/', views.manager_delete, name='manager_delete'),
 
     path('add_expenses/', views.add_day_expenses, name='add_day_expenses'),
-    path('add_month_expenses/', views.add_month_expenses, name='add_month_expenses'),
     path('manage_day_expenses/', views.manage_day_expenses, name='manage_day_expenses'),
     path('edit_expenses/<int:id>', views.edit_expenses, name='edit_expenses'),
+
+    path('add_month_expenses/', views.add_month_expenses, name='add_month_expenses'),
+    path('manage_month_expenses/', views.manage_month_expenses, name='manage_month_expenses'),
+    
 
 
 

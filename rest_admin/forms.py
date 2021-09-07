@@ -199,6 +199,23 @@ class ExpensesForm(forms.ModelForm):
             }),
         }
 
+class EditExpensesForm(forms.ModelForm):
+    
+    class Meta:
+        model = Expenses
+        fields = '__all__'
+        exclude = ('res', 'Date')
+
+        widgets = {
+            'Day_Expense': forms.TextInput(attrs={
+                'class': 'form-control',
+            }),
+
+            'Others': forms.TextInput(attrs={
+                'class': 'form-control',
+            }),
+        }
+
 
 class PerMonthExpensesForm(forms.ModelForm):
     

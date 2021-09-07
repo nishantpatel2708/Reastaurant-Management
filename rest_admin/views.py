@@ -3,9 +3,7 @@ from .utils import render_to_pdf  # created in step 4
 from django.views.generic import View
 from django.http import HttpResponse
 import datetime
-
 from django.contrib import messages
-
 from django.shortcuts import render, HttpResponse, HttpResponseRedirect, get_object_or_404, redirect
 from django.urls import reverse
 from .models import *
@@ -482,12 +480,35 @@ def add_day_expenses(request):
             form_r = form.save(commit=False)
             form_r.res = res
             form_r.save()
-            return redirect('rest_admin:table_view')
+            return redirect('rest_admin:manage_day_expenses')
         else:
             print(form.errors)
     else:
         form = ExpensesForm()
     return render(request, 'rest_admin/add_day_expenses.html', {'form': form})
+
+
+def manage_day_expenses(request):
+    data = Expenses.objects.all()
+
+    return render(request, 'rest_admin/manage_day_expenses.html', {'data': data})
+
+
+def edit_expenses(request, id):
+
+    restro = User.objects.get(id=request.user.id)
+    instance = get_object_or_404(Expenses, id=id)
+
+    form = EditExpensesForm(request.POST or None, instance=instance)
+
+    if form.is_valid():
+        form.save()
+        return redirect('rest_admin:manage_day_expenses')
+
+    else:
+        print(form.errors)
+
+    return render(request, 'rest_admin/edit_day_expenses.html', {'form': form, 'restro': restro})
 
 
 def add_month_expenses(request):
@@ -499,36 +520,17 @@ def add_month_expenses(request):
             form_r = form.save(commit=False)
             form_r.res = res
             form_r.save()
-            return redirect('rest_admin:table_view')
+            return redirect('rest_admin:manage_month_expenses')
         else:
             print(form.errors)
     else:
         form = PerMonthExpensesForm()
     return render(request, 'rest_admin/add_month_expenses.html', {'form': form})
 
-
-def manage_day_expenses(request):
-    data = Expenses.objects.all()
+ 
+def manage_month_expenses(request):
+    data = PerMonthExpenses.objects.all()
 
     return render(request, 'rest_admin/manage_month_expenses.html', {'data': data})
 
 
-def edit_expenses(request, id):
-
-    data = Expenses.objects.get(id=id)
-    return render(request, 'rest_admin/manage_month_expenses.html', {'data': data})
-
-
-def update_details(request, id):
-    restro = User.objects.get(id=request.user.id)
-    res = User.objects.get(id=request.user.id)
-    instance = get_object_or_404(User, id=res.id)
-
-    form = RestaurantForm(request.POST or None, instance=instance)
-
-    if form.is_valid():
-        form.save()
-        return redirect('rest_admin:user_profile')
-    else:
-        print(form.errors)
-    return render(request, 'rest_admin/update_u.html', {'form': form, 'restro': restro})

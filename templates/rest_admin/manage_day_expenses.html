@@ -34,16 +34,13 @@
                                 ID
                             </th>
                             <th>
-                                Electricity Bill
+                                Day Expenses
                             </th>
                             <th>
-                                Rent
+                                Other Expenses
                             </th>
                             <th>
-                                Others
-                            </th>
-                            <th>
-                                Month
+                                Date
                             </th>
                             <th>
                                 Actions
@@ -57,16 +54,14 @@
                                 {{ forloop.counter }}
                             </td>
                             <td>
-                                Rs.{{ i.Light_Bill }}/-
-                            </td>
-                            <td>
-                                Rs.{{ i.Rent }}/-
+                                Rs.{{ i.Day_Expense }}/-
                             </td>
                             <td>
                                 Rs.{{ i.Others }}/-
                             </td>
                             <td>
-                                {{ i.Date|date:'F' }}
+                                
+                                {{ i.Date|date:'d-F-Y' }}, {{ i.Date.time }}
                             </td>
 
 
