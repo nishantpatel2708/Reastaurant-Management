@@ -53,7 +53,7 @@ def user_login(request):
 
                 login(request, user)
 
-                return HttpResponseRedirect(reverse('rest_admin:table_view'))
+                return HttpResponseRedirect(reverse('rest_admin:t_price'))
             elif user.is_active and user.is_employee and user.is_manager:
 
                 login(request, user)

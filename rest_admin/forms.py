@@ -258,3 +258,68 @@ class EditMonthExpensesForm(forms.ModelForm):
                 'class': 'form-control',
             }),
         }
+
+
+
+class AssestsForm(forms.ModelForm):
+    
+    class Meta:
+        model = Assests
+        fields = '__all__'
+        exclude = ('res', )
+        widgets = {
+            'Furnishing': forms.TextInput(attrs={
+                'class': 'form-control',
+            }),
+            'Kitchen_equipements': forms.TextInput(attrs={
+                'class': 'form-control',
+            }),
+            'Others': forms.TextInput(attrs={
+                'class': 'form-control',
+            }),
+            'Date': forms.DateTimeInput(attrs={
+                'class': 'form-control ',
+                'type': 'datetime-local'
+            }),
+        }
+
+
+class AddUnitForm(forms.ModelForm):
+    unit_name = forms.CharField(widget=forms.TextInput(
+        attrs={
+            'class': 'form-control',
+        }))
+
+
+    class Meta:
+        model = Unit
+        fields = '__all__'
+        exclude = ['rest']
+
+
+
+class AddInventoryForm(forms.ModelForm):
+
+    Item_Name = forms.CharField(widget=forms.TextInput(attrs={
+        'class': 'form-control',
+    }))
+
+    Item_Amount = forms.CharField(widget=forms.TextInput(attrs={
+        'class': 'form-control',
+    }))
+
+    Item_Price = forms.CharField(widget=forms.TextInput(
+        attrs={
+            'class': 'form-control',
+        }))
+
+
+    class Meta:
+        model = Inventory
+        exclude = ['rest', 'Date']
+        widgets = {'Unit': forms.Select(attrs={'class': 'form-control'})}
+
+    def __init__(self, user, *args, **kwargs):
+        super(AddInventoryForm, self).__init__(*args, **kwargs)
+        self.fields['Unit'].queryset = Unit.objects.filter(
+            rest_id=user)

@@ -99,3 +99,31 @@ class PerMonthExpenses(models.Model):
 
     def __str__(self):
         return self.res.restaurant_name
+
+
+class Assests(models.Model):
+    res = models.ForeignKey(User, on_delete=models.CASCADE)
+    Furnishing = models.PositiveIntegerField(null=True, blank=True)
+    Kitchen_equipements = models.PositiveIntegerField(null=True, blank=True)
+    Others = models.PositiveIntegerField(null=True, blank=True)
+    Date = models.DateTimeField()
+
+
+class Unit(models.Model):
+    rest = models.ForeignKey(User, on_delete=models.CASCADE)
+    unit_name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.unit_name
+
+
+class Inventory(models.Model):
+    rest = models.ForeignKey(User, on_delete=models.CASCADE)
+    Item_Name = models.CharField(max_length=50)
+    Item_Price = models.PositiveBigIntegerField()
+    Item_Amount = models.CharField(max_length=50)
+    Unit = models.ForeignKey(Unit, on_delete=models.CASCADE)
+    Date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.Item_Name

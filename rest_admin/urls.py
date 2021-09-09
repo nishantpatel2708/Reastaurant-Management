@@ -38,7 +38,7 @@ urlpatterns = [
     path('delete_table/<int:id>/', views.table_delete, name='delete_table'),
 
     path('table_list/', views.table_list, name='table_list'),
-    path('report/', views.report, name='report'),
+
     path('com_u/<int:id>/', views.com_edit, name='com_u'),
 
     path('add_manager/', views.add_manager, name='add_manager'),
@@ -54,8 +54,21 @@ urlpatterns = [
     path('add_month_expenses/', views.add_month_expenses, name='add_month_expenses'),
     path('manage_month_expenses/', views.manage_month_expenses, name='manage_month_expenses'),
     path('edit_month_expenses/<int:id>', views.edit_month_expenses, name='edit_month_expenses'),
+
+    path('balence_sheet/', views.balence_sheet, name='balence_sheet'),
+
+    path('add_assests/', views.add_assests, name='add_assests'),
+    path('manage_assests/', views.manage_assests, name='manage_assests'),
+    path('edit_assests/<int:id>', views.edit_assests, name='edit_assests'),
+    path('add_unit/', views.add_unit, name='add_unit'),
+    path('unit_list/', views.unit_list, name='unit_list'),
+    path('edit_unit/<int:id>', views.edit_unit, name='edit_unit'),
+    path('delete_unit/<int:id>', views.delete_unit, name='delete_unit'),
     
-
-
+    path('add_inventory/', views.add_inventory, name='add_inventory'),
+    path('inventory_list/', views.inventory_list, name='inventory_list'),
+    path('edit_inventory/<int:id>', views.edit_inventory, name='edit_inventory'),
+    path('delete_inventory/<int:id>', views.delete_inventory, name='delete_inventory'),
+    
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

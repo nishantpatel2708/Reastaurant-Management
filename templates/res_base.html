@@ -53,14 +53,14 @@
         Tip 2: you can also add an image using data-image tag
     -->
         <div class="logo">
-          <a href="http://www.creative-tim.com" class="simple-text logo-normal">
+          <a href="#" class="simple-text logo-normal">
             {% block res_name %}{{ restro.restaurant_name }}{% endblock %}
           </a>
         </div>
         <div class="sidebar-wrapper">
           <ul class="nav">
             <li class="nav-item active">
-              <a class="nav-link" href="{% url 'rest_admin:table_view' %}">
+              <a class="nav-link" href="{% url 'rest_admin:t_price' %}">
                 <i class="material-icons">dashboard</i>
                 <p>Dashboard</p>
               </a>
@@ -271,19 +271,6 @@
             
             </li>
 
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'rest_admin:t_price' %}">
-                <i class="material-icons">store</i>
-                <p>Restaurants Info</p>
-              </a>
-            </li>
-
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'rest_admin:add_month_expenses' %}">
-                <i class="material-icons">account_balance_wallet</i>
-                <p>Add Month Expenses</p>
-              </a>
-            </li>
 
             <li class="nav-item">
               <a class="nav-link" data-toggle="collapse" href="#setting-dropdown20" aria-expanded="false"
@@ -305,6 +292,59 @@
               </div>
             
             </li>
+            
+            
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="collapse" href="#setting-dropdown21" aria-expanded="false"
+                aria-controls="setting-dropdown">
+                <i class="material-icons">web_asset</i>
+                <span class="menu-title">Assets<b class="caret"></b></span>
+              </a>
+              <div class="collapse" id="setting-dropdown21">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'rest_admin:add_assests' %}"><i class="material-icons">add_box</i>
+                      Add Assests</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'rest_admin:manage_assests' %}"><i class="material-icons">list_alt</i>
+                      Manage Assets</a>
+                  </li>
+                </ul>
+              </div>
+            
+            </li>
+            
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="collapse" href="#setting-dropdown30" aria-expanded="false"
+                aria-controls="setting-dropdown">
+                <i class="material-icons">group</i>
+                <span class="menu-title">Inventory<b class="caret"></b></span>
+              </a>
+              <div class="collapse" id="setting-dropdown30">
+                <ul class="nav flex-column sub-menu">
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'rest_admin:add_unit' %}"><i class="material-icons">add_box</i>
+                      Add Unit</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'rest_admin:unit_list' %}"><i class="material-icons">list_alt</i>
+                      Unit List</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'rest_admin:add_inventory' %}"><i class="material-icons">list_alt</i>
+                      Add Inventory</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'rest_admin:inventory_list' %}"><i class="material-icons">list_alt</i>
+                      Inventory List</a>
+                  </li>
+            
+                </ul>
+              </div>
+            
+            </li>
+
 
             <li class="nav-item">
               <a class="nav-link" href="{% url 'rest_admin:user_profile' %}">
@@ -314,11 +354,13 @@
             </li>
 
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'rest_admin:report' %}">
+              <a class="nav-link" href="{% url 'rest_admin:balence_sheet' %}">
                 <i class="material-icons">report</i>
                 <p>Report</p>
               </a>
             </li>
+
+
 
 
 
