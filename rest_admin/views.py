@@ -11,35 +11,37 @@ from .forms import *
 from accounts.forms import RestaurantForm
 from accounts.models import User
 from restaurant.models import *
-
+from django.db.models import Count
 
 # Create your views here.
 def t_price(request):
     restro = User.objects.get(id=request.user.id)
     res = User.objects.get(id=request.user.id)
-    order_list = OrderItem.objects.filter(table_no__rest_id=res.id, ordered=True,
-                                          date__year=datetime.datetime.today().year,
-                                          date__month=datetime.datetime.today().month,
-                                          date__day=datetime.datetime.today().day)
-    order_list2 = OrderItem.objects.filter(table_no__rest_id=res.id, ordered=True,
-                                           date__year=datetime.datetime.today().year,
-                                           date__month=datetime.datetime.today().month)
+    order_list =  Order.objects.filter(table_no__rest=res.id, ordered=True, status="complete",
+                  start_date__date__day=datetime.datetime.today().day,
+                  start_date__date__month=datetime.datetime.today().month,
+                  start_date__date__year=datetime.datetime.today().year)
+    order_list2 = Order.objects.filter(table_no__rest=res.id, ordered=True, status="complete",
+                  start_date__date__month=datetime.datetime.today().month,
+                  start_date__date__year=datetime.datetime.today().year)
     total_emp = User.objects.filter(rest_id=request.user, is_employee=True)
-    total_earn = OrderItem.objects.filter(
+    total_earn = Order.objects.filter(
         table_no__rest_id=res.id, ordered=True)
     total = 0
     m_total = 0
     a_total = 0
     for i in order_list:
 
-        total += i.product.Price
+        total += i.gst_total()
 
     for j in order_list2:
-        m_total += j.product.Price
+        m_total += j.gst_total()
 
     for k in total_earn:
-        a_total += k.product.Price
+        a_total += k.gst_total()
 
+
+    ### month bar chart ######
     month = [1,2,3,4,5,6,7,8,9,10,11,12]
 
     months_earn = []
@@ -58,9 +60,70 @@ def t_price(request):
             months_earn.append(calc)
             calc = 0
 
-    print(months_earn)
+    ########## best seller bar chart ########
+
+    best_data = OrderItem.objects.filter(table_no__rest=res.id, ordered=True, date__date__month=datetime.datetime.today().month,date__date__year=datetime.datetime.today().year)
+    
+    dish_count = []
+
+    dish_name = []
+
+    top_sell = best_data.values_list('product_id').annotate(product_count=Count('product_id')).order_by('-product_count')[:10]
+    
+    for i in top_sell:
+        dish_name.append(MenuTable.objects.get(id=i[0]).Dish_Name)
+        dish_count.append(i[1])
+
+    ########## expenses ############
+    year = datetime.datetime.today().year
+    month = datetime.datetime.today().month
+    day_earn = OrderItem.objects.filter(table_no__rest_id=res.id, ordered=True, date__year=year,
+                                        date__month=month)
+
+    day_total = 0
+    
+    for i in day_earn:
+        day_total += i.get_total_item_price()
+                        
+    day_expense = Expenses.objects.filter(res_id=res.id, Date__year=year, Date__month=month)
+
+    expense_total = 0
+    for i in day_expense:
+        expense_total += i.Day_Expense + i.Others
+
+
+    per_month_expense = PerMonthExpenses.objects.filter(res_id=res.id, Date__date__year=year, Date__date__month=month)
+
+    month_expense = 0 
+
+    for i in per_month_expense:
+
+        month_expense = i.Rent + i.Light_Bill + i.Others
+
+
+    salary = User.objects.filter(rest_id=res.id, is_employee=True)
+
+    sal = 0
+
+    for i in salary:
+        sal += i.salary
+    
+    assests_total = Assests.objects.filter(res_id=res.id, Date__date__year=year, Date__date__month=month)
+    
+    a_total = 0
+
+    for i in assests_total:
+        a_total += i.Furnishing + i.Kitchen_equipements + i.Others
+    
+
+    final_earn = a_total + day_total
+
+    final_Expense = sal + month_expense + expense_total
+    
+
+
     return render(request, 'rest_admin/t_earn.html', {'total': total, 'm_total': m_total, 'total_emp': total_emp,
-                                                      'a_total': a_total, 'restro': restro, 'months_earn':months_earn})
+                                                      'a_total': a_total, 'restro': restro, 'months_earn':months_earn,'dish_name':dish_name,'dish_count':dish_count, 'final_earn':final_earn, 'final_Expense':final_Expense})
 
 
 def qr(request):
