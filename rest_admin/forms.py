@@ -16,29 +16,18 @@ class QrForm(forms.ModelForm):
 
 class AddMenuForm(forms.ModelForm):
 
-    Dish_Name = forms.CharField(widget=forms.TextInput(attrs={
-        'class': 'form-control',
-    }))
-    Dish_Description = forms.CharField(widget=forms.TextInput(
-        attrs={
-            'class': 'form-control',
-        }))
-    speciality = forms.BooleanField(widget=forms.CheckboxInput(
-        attrs={
-            'class': 'form-check-input',
-        }))
-
-    Price = forms.CharField(widget=forms.TextInput(attrs={
-        'class': 'form-control',
-    }))
-    pices = forms.CharField(widget=forms.TextInput(attrs={
-        'class': 'form-control',
-    }))
-
     class Meta:
         model = MenuTable
         exclude = ['res', 'status']
-        widgets = {'category': forms.Select(attrs={'class': 'form-control'})}
+        widgets = {
+            'Dish_Name': forms.TextInput(attrs={'class': 'form-control'}),
+            'Dish_Description': forms.TextInput(attrs={'class': 'form-control'}),
+            'speciality': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'Price': forms.TextInput(attrs={'class': 'form-control'}),
+            'pices': forms.TextInput(attrs={'class': 'form-control'}),
+            'category': forms.Select(attrs={'class': 'form-control'}),
+            'Dish_image': forms.FileInput(attrs={'class': 'form-control'}),
+            }
 
     def __init__(self, user, *args, **kwargs):
         super(AddMenuForm, self).__init__(*args, **kwargs)
@@ -51,15 +40,25 @@ class AddCategoryForm(forms.ModelForm):
         attrs={
             'class': 'form-control',
         }))
+
     Description = forms.CharField(widget=forms.TextInput(
         attrs={
             'class': 'form-control',
         }))
 
+    Category_Image = forms.FileField(widget=forms.FileInput(
+        attrs={
+            'class': 'form-control',
+        }))
     class Meta:
         model = Categories
         fields = '__all__'
         exclude = ['rest']
+        widgets = {
+            'Category_Name': forms.TextInput(attrs={'class': 'form-control'}),
+            'Description': forms.TextInput(attrs={'class': 'form-control'}),
+            'Category_Image': forms.FileInput(attrs={'class': 'form-control'}),
+            }
 
 
 class EmployeeForm(forms.ModelForm):
@@ -103,7 +102,7 @@ class EmployeeForm(forms.ModelForm):
                 'class': 'form-control',
             }),
             'Adhaar_Card': forms.FileInput(attrs={
-                'class': '',
+                'class': 'form-control',
             }),
             'Category': forms.Select(attrs={
                 'class': 'form-control',
@@ -112,7 +111,7 @@ class EmployeeForm(forms.ModelForm):
                 'class': 'form-control',
             }),
             'profile_photo': forms.FileInput(attrs={
-                'class': '',
+                'class': 'form-control',
             })
         }
 

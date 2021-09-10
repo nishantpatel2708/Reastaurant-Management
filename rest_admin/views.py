@@ -13,7 +13,7 @@ from accounts.models import User
 from restaurant.models import *
 from django.db.models import Count
 
-# Create your views here.
+
 def t_price(request):
     restro = User.objects.get(id=request.user.id)
     res = User.objects.get(id=request.user.id)
@@ -363,8 +363,6 @@ def table_delete(request, id):
     return HttpResponseRedirect(reverse('rest_admin:table_list'))
 
 
-
-
 def report(request):
     restro = User.objects.get(id=request.user.id)
     res = User.objects.get(id=request.user.id)
@@ -482,6 +480,7 @@ def update_details(request, id):
 
 
 def com_edit(request, id):
+
     instance = get_object_or_404(OrderItem, id=id)
 
     form = ComForm(request.POST or None, instance=instance)
@@ -555,6 +554,7 @@ def manager_delete(request, id):
 
 
 def add_day_expenses(request):
+    restro = User.objects.get(id=request.user.id)
     res = User.objects.get(id=request.user.id)
     if request.method == 'POST':
         form = ExpensesForm(request.POST, request.FILES)
@@ -568,12 +568,13 @@ def add_day_expenses(request):
             print(form.errors)
     else:
         form = ExpensesForm()
-    return render(request, 'rest_admin/add_day_expenses.html', {'form': form})
+    return render(request, 'rest_admin/add_day_expenses.html', {'form': form, 'restro': restro})
 
 
 def manage_day_expenses(request):
+    restro = User.objects.get(id=request.user.id)
     data = Expenses.objects.filter(res_id=request.user.id)
-    return render(request, 'rest_admin/manage_day_expenses.html', {'data': data})
+    return render(request, 'rest_admin/manage_day_expenses.html', {'data': data, 'restro': restro})
 
 
 def edit_expenses(request, id):
@@ -594,6 +595,7 @@ def edit_expenses(request, id):
 
 
 def add_month_expenses(request):
+    restro = User.objects.get(id=request.user.id)
     res = User.objects.get(id=request.user.id)
     if request.method == 'POST':
         form = PerMonthExpensesForm(request.POST, request.FILES)
@@ -625,30 +627,18 @@ def add_month_expenses(request):
             print(form.errors)
     else:
         form = PerMonthExpensesForm()
-    return render(request, 'rest_admin/add_month_expenses.html', {'form': form})
+    return render(request, 'rest_admin/add_month_expenses.html', {'form': form, 'restro': restro})
 
  
 def manage_month_expenses(request):
+    restro = User.objects.get(id=request.user.id)
     data = PerMonthExpenses.objects.filter(res_id=request.user.id)
 
-    return render(request, 'rest_admin/manage_month_expenses.html', {'data': data})
-
-
-
-def edit_expenses(request, id):
-
-    data = Expenses.objects.get(id=id)
-    form = RestaurantForm(request.POST or None, instance=data)
-
-    if form.is_valid():
-        form.save()
-        return redirect('rest_admin:user_profile')
-    else:
-        print(form.errors)
-    return render(request, 'rest_admin/update_u.html', {'form': form, 'restro': restro})
+    return render(request, 'rest_admin/manage_month_expenses.html', {'data': data, 'restro': restro})
 
 
 def edit_month_expenses(request, id):
+    
     restro = User.objects.get(id=request.user.id)
     instance = get_object_or_404(PerMonthExpenses, id=id)
 
@@ -662,7 +652,6 @@ def edit_month_expenses(request, id):
         print(form.errors)
 
     return render(request, 'rest_admin/edit_month_expenses.html', {'form': form, 'restro': restro})
-
 
 
 def balence_sheet(request):
@@ -767,6 +756,7 @@ def balence_sheet(request):
 
 
 def add_assests(request):
+    restro = User.objects.get(id=request.user.id)
     res = User.objects.get(id=request.user.id)
     if request.method == 'POST':
         form = AssestsForm(request.POST, request.FILES)
@@ -780,14 +770,14 @@ def add_assests(request):
             print(form.errors)
     else:
         form = AssestsForm()
-    return render(request, 'rest_admin/add_assests.html', {'form': form})
+    return render(request, 'rest_admin/add_assests.html', {'form': form, 'restro': restro})
 
  
 def manage_assests(request):
+    restro = User.objects.get(id=request.user.id)
     data = Assests.objects.filter(res_id=request.user.id)
 
-    return render(request, 'rest_admin/manage_assets.html', {'data': data})
-
+    return render(request, 'rest_admin/manage_assets.html', {'data': data, 'restro': restro})
 
 
 def edit_assests(request, id):
@@ -826,9 +816,10 @@ def add_unit(request):
 
 
 def unit_list(request):
+    restro = User.objects.get(id=request.user.id)
     data = Unit.objects.filter(rest_id=request.user.id)
  
-    return render(request, 'rest_admin/unit_list.html', {'data': data})
+    return render(request, 'rest_admin/unit_list.html', {'data': data, 'restro': restro})
 
 def edit_unit(request, id):
     restro = User.objects.get(id=request.user.id)
@@ -876,9 +867,10 @@ def add_inventory(request):
 
 
 def inventory_list(request):
+    restro = User.objects.get(id=request.user.id)
     data = Inventory.objects.filter(rest_id=request.user.id)
     
-    return render(request, 'rest_admin/inventory_list.html', {'data': data})
+    return render(request, 'rest_admin/inventory_list.html', {'data': data, 'restro': restro})
 
 
 def edit_inventory(request, id):

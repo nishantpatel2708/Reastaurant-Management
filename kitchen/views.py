@@ -10,14 +10,6 @@ from rest_admin.forms import *
 # Create your views here.
 
 
-def table_view(request):
-    restro = User.objects.get(id=request.user.rest_id)
-    res = User.objects.get(id=request.user.rest_id)
-    order_list = Order.objects.filter(table_no__rest_id=res.id, ordered=True,
-                                      ordered_date__day=datetime.datetime.today().day, status='Pending')
-    print("order_list>>>>>", order_list)
-    return render(request, 'kitchen/today_order.html', {'order_list': order_list, 'restro': restro})
-
 def category_list(request):
     user = User.objects.get(id=request.user.id)
     res = User.objects.get(id=request.user.rest_id)

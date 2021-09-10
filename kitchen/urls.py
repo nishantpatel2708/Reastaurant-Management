@@ -8,11 +8,11 @@ app_name = 'kitchen'
 
 urlpatterns = [
 
-    path('', views.table_view, name='table_view'),
+
     path('cat_list/', views.category_list, name='cat_list'),
     path('menu_list', views.menu_list, name='menu_list'),
     path('orders/', views.orders, name='orders'),
-    path('t_orders/', views.today_order, name='t_order'),
+    path('', views.today_order, name='t_order'),
     path('orders_det/<int:id>/', views.order_details, name='order_det'),
     path('P_state/<int:id>/', views.status_preparing, name='p_state'),
     path('rts_state/<int:id>/', views.status_ready_to_serve, name='rts_state'),

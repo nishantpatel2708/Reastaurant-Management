@@ -1,37 +1,35 @@
 <!DOCTYPE html>
 {% extends 'waiter_base.html' %}
 {% load static %}
-{% block head %}
-<link href="{% static 'my_css/qr.css' %}" rel="stylesheet" />
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
+    {% block head %}
+        <link href="{% static 'my_css/qr.css' %}" rel="stylesheet" />
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/css/select2.min.css" rel="stylesheet" />
 
-<style></style>
-{% endblock %}
+        <style></style>
+    {% endblock %}
+
 {% block body %}
     {% if messages and order_det.table_no.rest_id == user.user_id %}
-
-    {% for message in messages %}
-    {% if message.tags == 'warning' %}
-    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-        {{ message }}
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
+        {% for message in messages %}
+            {% if message.tags == 'warning' %}
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endif %}
+        {% endfor %}
     {% endif %}
-    {% endfor %}
-
-
-    {% endif %}
-
 
 <div class="container-fluid">
     <div class="content">
         <div class="row">
             <div class="col-lg-12">
                 <div class="card">
-                    <div class="card-header">Orders</div>
+                    <div class="card-header card-header-primary">
+                        <h4 class="card-title">Orders</h4>
+                        <p class="card-category">Manage Order From Here</p>
+                    </div>
                     <div class="card-body">
                         <form method="post" enctype="multipart/form-data">
                             {% csrf_token %} {{ formset.management_form }}
