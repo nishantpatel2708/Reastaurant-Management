@@ -1,10 +1,11 @@
+from django.forms.widgets import CheckboxInput
 from django.shortcuts import render, HttpResponse
 from django.template.loader import get_template
 from rest_admin.utils import render_to_pdf
 from django.views.generic import View
 from django.http import HttpResponse
 import datetime
-
+from restaurant.forms import *
 from django.contrib import messages
 
 from django.shortcuts import render, HttpResponse, HttpResponseRedirect, get_object_or_404, redirect
@@ -14,6 +15,9 @@ from rest_admin.forms import *
 from accounts.models import User
 from restaurant.models import *
 from django.utils import timezone
+from django.forms import fields, formset_factory, modelformset_factory
+from .forms import *
+
 # Create your views here.
 
 def qr(request):
@@ -61,6 +65,7 @@ def add_menu(request):
         'form': form,
         'restro': restro
     })
+
 
 def add_categories(request):
     restro = User.objects.get(id=request.user.rest_id)
@@ -224,9 +229,13 @@ def today_order(request):
     restro = User.objects.get(id=request.user.rest_id)
     res = User.objects.get(id=request.user.rest_id)
     order_list = Order.objects.filter(table_no__rest_id=res.id, ordered=True,
-                                      ordered_date__day=datetime.datetime.today().day, status='Pending')
-    print(order_list)
-    return render(request, 'manager/today_order.html', {'order_list': order_list, 'restro': restro})
+                 ordered_date__day=datetime.datetime.today().day, status='Pending')
+
+    parcel_order_list = Parcel_Order.objects.filter(customer__rest_id=res.id, ordered=True,
+                        ordered_date__day=datetime.datetime.today().day, status='Pending')
+
+
+    return render(request, 'manager/today_order.html', {'parcel_order_list':parcel_order_list, 'order_list': order_list, 'restro': restro})
 
 
 def order_complete(request, id):
@@ -312,6 +321,7 @@ def com_edit(request, id):
 ################## New #################
 from django.forms import inlineformset_factory, Select, TextInput
 
+
 def manual_order(request, id):
     restro = User.objects.get(id=request.user.rest_id)
     table = Table.objects.get(id=id)
@@ -321,7 +331,7 @@ def manual_order(request, id):
         'quantity': TextInput(attrs={'class': 'form-control', 'size': '1'})},
         extra=1, max_num=20, can_delete=False)
 
-
+    
     customer = Table.objects.get(id=id)
 
     formset = order_formset(
@@ -329,7 +339,6 @@ def manual_order(request, id):
 
     if request.method == 'POST':
 
-        # form = IpdTreatmentForm(request.POST)
         formset = order_formset(
             request.POST, request.FILES, instance=customer)
 
@@ -341,11 +350,13 @@ def manual_order(request, id):
                 qua = cd.get('quantity')
             
             demo = formset.save(commit=False)
+
             for i in demo:
                 item = get_object_or_404(MenuTable, id=i.product.id)
                 
                 order_qs = Order.objects.filter(
                 table_no_id=id, ordered=True, status='Pending', table_no__rest=restro)
+                
                 if order_qs.exists():
                     order = order_qs[0]
 
@@ -381,8 +392,144 @@ def manual_order(request, id):
     else:
         formset = order_formset()
 
-    return render(request, 'manager/manual_order.html', {'formset': formset, 'restro': restro, 'table': table})
+    return render(request, 'manager/manual_order.html', {'formset': formset, 'restro': restro, 'table': table, 'id':id})
 
-
-
+  
     
+def manual_order_parcel(request):
+
+    order_formset = inlineformset_factory(Parcel_Customer, Parcel_OrderItem, fields=('product', 'quantity'), labels={'product': '', 'quantity': ''},
+    widgets={'product': Select(attrs={'class': 'form-control', 'label': ''}),
+    'quantity': TextInput(attrs={'class': 'form-control', 'size': '1'})},
+    extra=1, max_num=20, can_delete=False)
+
+    customer = Parcel_Customer.objects.last()
+
+    formset = order_formset(
+        queryset=Parcel_OrderItem.objects.none(), instance=customer)
+
+    if request.method == 'POST':
+
+        formset = order_formset(
+            request.POST, request.FILES, instance=customer)
+
+        if formset.is_valid():
+            
+            demo = formset.save(commit=False)
+
+            print("demo>>", demo)
+
+            for i in demo:
+                item = get_object_or_404(MenuTable, id=i.product.id)
+
+                print("item>>>>>", item)
+                
+                order_qs = Parcel_Order.objects.filter(
+                customer_id=customer.id, ordered=True, status='Pending')
+
+                print("order_qs>>>", order_qs)
+
+                if order_qs.exists():
+                    order = order_qs[0]
+
+                    print("order>>>", order)
+
+                    if order.item.filter(product_id=item.pk, status='pending').exists() or order.item.filter(product_id=item.pk, status='Preparing'):
+                        o_i = Parcel_OrderItem.objects.get(product_id=i.product.id)
+                        o_i.quantity += 1
+                        o_i .save()
+                        print('else1')
+                        messages.info(request, "Item Quantity was Updated")
+                        
+                    else:
+                        print('else2')
+                        messages.info(request, "item was added to cart")
+                        formset.save(commit=True)
+                        order.item.add(i)
+                        return redirect('manager:table_view')
+                        
+                else:
+                    ordered_date = timezone.now()
+                    print('else3')
+                    order = Parcel_Order.objects.create(
+                        customer_id=customer.id, ordered_date=ordered_date,  ordered=True, status='Pending')
+                    formset.save(commit=True)
+                    order.item.add(i)
+                    
+                    messages.info(request, "item was added to cart")
+        
+            return redirect('manager:table_view')
+
+        else:
+            print(formset.errors)
+            
+    else:
+        formset = order_formset()
+
+
+    return render(request, 'manager/manual_order_parcel.html', {'customer':customer, 'formset': formset})
+
+
+def add_customer(request):
+    restro = User.objects.get(id=request.user.rest_id)
+    res = User.objects.get(id=request.user.rest_id)
+
+    if request.method == 'POST':
+        form = AddCustomerForm(request.POST, request.FILES)
+
+        if form.is_valid():
+
+            form_r = form.save(commit=False)
+            form_r.rest = res
+            form_r.save()
+            return redirect('manager:manual_order_parcel')
+
+        else:
+            print(form.errors)
+
+    else:
+        form = AddCustomerForm()
+
+
+    return render(request, 'manager/add_customer.html', {
+        'form': form,
+        'restro': restro
+    })
+
+
+
+class Parcel_GeneratePdf(View):
+    def get(self, request, id):
+        o_state = Parcel_Order.objects.get(id=id)
+        o_state.status = 'Complete'
+        o_state.save()
+
+        customer = Parcel_Customer.objects.get(id=id)
+
+        list = Parcel_Order.objects.get(id=id)
+
+        data = {
+            'bill_no': list.id,
+            'sgst_amount': list.sgst_price(),
+            'cgst_amount': list.cgst_price(),
+            'total_gst': list.sc_total(),
+            'rest_name': list.customer.rest.restaurant_name,
+            'Discount': list.customer.rest.discount,
+            'gst_number': list.customer.rest.GST_Number,
+            'rest_image': list.customer.rest.profile_photo.url,
+            'customer': customer.name,
+            'mobile_no': customer.mobile_no,
+            'address': list.customer.rest.address,
+            'state': list.customer.rest.state,
+            'pin_code': list.customer.rest.pin_code,
+            'phone_no': list.customer.rest.mobile_no,
+            'Item': list.item.all(),
+            'sgst': list.customer.rest.SGST,
+            'cgst': list.customer.rest.CGST,
+            'date': datetime.datetime.today().date(),
+            'time': datetime.datetime.today().time(),
+            'Total': list.get_total(),
+            'grand_total': list.gst_total(),
+        }
+        pdf = render_to_pdf('manager/parcel_invoice.html', data)
+        return HttpResponse(pdf, content_type='application/pdf')

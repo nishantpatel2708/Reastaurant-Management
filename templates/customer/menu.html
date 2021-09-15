@@ -1,265 +1,123 @@
-<!doctype html>
+<!DOCTYPE html>
 {% load static %}
-
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="{% static 'bootstrap/css/bootstrap.min.css' %}"
+      rel="stylesheet"
+    />
 
-    <link rel="stylesheet" href="{% static 'menu_page/w3.css' %}">
-    <link rel="stylesheet" href="{% static 'menu_page/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'menu_page/font-awesome.min.css' %}">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="{% static 'my_css/menu.css' %}">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Icons"
+      rel="stylesheet"
+    />
 
-    <title>Scan N Order</title>
-</head>
-<body style="margin-left: 18px; margin-right: 10px;">
-<!-- navigation Start Here -->
-<div class="topnav" style="background-color: #ABE63A;" id="myTopnav">
-  <a href="#home" class="text-white">{{ table.rest.restaurant_name|capfirst }}</a>
+    <link rel="stylesheet" href="{% static 'my_css/menu.css' %}" />
 
-</div>
-<!-- end here -->
+    <title>Menu</title>
+  </head>
 
-<!--search form here -->
-<div class="container-fluid bg-light p-2">
-<form class="form-group row col-md-12">
-
-    <input type="email" class="form-control col-md-10 col-10" placeholder="Dish Name" id="inputEmail4">
-    <button type="submit" class="form-control col-md-2 col-2 btn btn-outline-success" ><i class="material-icons nav__icon">search</i></button>
-</form>
-</div>
-<!-- end here -->
-<!--carosel -->
-<div id="carouselExampleIndicators" class="carousel slide" style="height: 300px" data-ride="carousel">
-  <ol class="carousel-indicators">
-    <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-    <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-    <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-  </ol>
-  <div class="carousel-inner" >
-      {% for i in menu %}
-    <div class="carousel-item {% if forloop.counter == 1 %}active{% else %}item{% endif %}">
-      <img class="d-block w-100" style="height: 300px !important;" src="{{ i.Dish_image.url }}" alt="First slide">
-        <div class="carousel-caption">
-            <h5 class="text-dark">{{ i.Dish_Name }}</h5>
-            <p class="text-dark"><span class="" style="color: #ABE63A">₹</span>{{ i.Price }}</p>
+  <body>
+    <section class="navigation">
+      <nav
+        class="navbar shadow navbar-expand-lg navbar-light bg-light"
+        style="
+          background-color: #fff2d9 !important;
+          border-bottom-left-radius: 30px;
+          border-bottom-right-radius: 30px;
+        "
+      >
+        <div class="container pb-4 pb-md-0">
+          <a class="navbar-brand text-uppercase mb-4 mb-md-0" href="#"
+            ><span style="color: black; font-weight: 500"
+              >{{ table.rest.restaurant_name|capfirst }}</span
+            ></a
+          >
+          <p class="d-md-none">What do you want to have today ?</p>
+          <form class="d-flex ms-auto w-100">
+            <input
+              class="form-control form-control-sm me-2 p-2"
+              type="search"
+              placeholder="{{ table.rest.restaurant_name|capfirst }}"
+              aria-label="Search"
+            />
+            <button class="btn btn-sm" type="submit">
+              <i class="material-icons" style="font-size: 20px; color: white"
+                >search</i
+              >
+            </button>
+          </form>
         </div>
-    </div>
-    {% endfor %}
-  </div>
-  <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    <span class="sr-only">Previous</span>
-  </a>
-  <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-    <span class="sr-only">Next</span>
-  </a>
-</div><br>
-<!-- end here -->
-{% if messages and table.rest_id == user.id %}
+      </nav>
+    </section>
 
-    {% for message in messages %}
-        {% if message.tags == 'error' %}
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-          {{ message }}
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
+    <section class="category mt-4 mt-md-0 mb-4 mb-md-0">
+      <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+        {% for i in cat %}
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link {% if forloop.counter == 1 %}active{% endif %}"
+            id="pills-{{ i.id }}-tab"
+            data-bs-toggle="pill"
+            data-bs-target="#pills-{{ i.id }}"
+            type="button"
+            role="tab"
+            aria-controls="pills-{{ i.id }}"
+            aria-selected="{% if forloop.counter == 1 %}true{% endif %}"
+          >
+            <i class="material-icons" 
+                >lunch_dining</i
+              >
           </button>
-        </div>
-        {% endif %}
-    {% endfor %}
+          {{ i.Category_Name }}
+        </li>
+        {% endfor %}
+      </ul>
 
+      <div class="tab-content" id="pills-tabContent">
+        {% for j in cat %}
+        <div
+          class="tab-pane fade{% if forloop.counter == 1 %} show active{% endif %}"
+          id="pills-{{ j.id }}"
+          role="tabpanel"
+          aria-labelledby="pills-{{ j.id }}-tab"
+        >
+        <div class="row">
 
-{% endif %}
-
-<div class="tabbale">
-<ul class="nav nav-tabs"   id="myTab" role="tablist">
-     {% for i in cat %}
-  <li class="nav-item" role="presentation">
-    <a class="nav-link  {% if forloop.counter == 1 %}active{% endif %}" id="cat{{ i.id }}-tab" data-toggle="tab" href="#cat{{ i.id }}" role="tab" aria-controls="cat{{ i.id }}" aria-selected="{% if forloop.counter == 1 %}true{% endif %}"> {{ i.Category_Name }}</a>
-  </li>
-    {% endfor %}
-
-</ul>
-</div>
-<div class="tab-content" id="myTabContent">
-{% for j in cat %}
-  <div class="tab-pane fade {% if forloop.counter == 1 %}show active{% endif %}" id="cat{{ j.id }}" role="tabpanel" aria-labelledby="cat{{ j.id }}-tab">
-     {% for i in menu %}
-      {% if j.Category_Name == i.category.Category_Name %}
-      <div class="con">
-        <div class="w3-panel w3-card-4">
-
-          <div class="row">
-            <div class="col-lg-3">
-              <div class="horizontal-card">
-
-                <img src="{{ i.Dish_image.url }}" />
-                <div class="horizontal-card-body">
-
-                  <h4 class="card-title" >{{ i.Dish_Name }}</h4>
-                  <span class="card-text" style="font-size: 12px;">{{ i.Dish_Description }}</span>
-                    <p class="text-dark mt-2"><b> <span class="" style="color: #ABE63A">₹</span>{{ i.Price }}</b></p>
-                </div>
-                <div class="horizontal-card-footer">
-                  <a class="minus" href="{% url 'restaurant:remove_single' i.id table.id %}" > - </a>
-                  <a class="card-text status p-1" >0
-                      {% for j in cart %}
-
-                        {% if j.product.id == i.id %}
-
-                            {{ j.quantity }}
-
-                        {% endif %}
-
-                     {% endfor %}
-
-                  </a>
-
-                   <a class="plus" href="{% url 'restaurant:add_to_cart' i.id table.id %}" > + </a>
-                </div>
-              </div>
-            </div>
+          {% for i in menu %} 
+            {% if j.Category_Name == i.category.Category_Name %} 
+              
+                  <div class="col-6 col-md-3 " >
+                    <div class="card" >
+                      <img src="{{ i.Dish_image.url }}" class="card-img-top" alt="...">
+                      <div class="card-body">
+                        <h5 class="card-title">{{ i.Dish_Name }}</h5>
+                        <p class="card-text">{{ i.Dish_Description|truncatechars:15 }}</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                
+            {% endif %} 
+          {% endfor %}
+   
           </div>
         </div>
+
+        {% endfor %}
       </div>
-         {% endif %}
-      {% endfor %}
-  </div>
-{% endfor %}
-<!-- comment
-  <div class="tab-pane fade mt-3" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-     {% for i in menu %}
-      <div class="con">
-        <div class="w3-panel w3-card-4">
+    </section>
 
-          <div class="row">
-            <div class="col-lg-3">
-              <div class="horizontal-card">
+    <!-- javascript added -->
 
-                <img src="{{ i.Dish_image.url }}" />
-                <div class="horizontal-card-body">
-
-                  <h4 class="card-title" >{{ i.Dish_Name }}</h4>
-                  <span class="card-text" style="font-size: 12px;">{{ i.Dish_Description }}</span>
-                    <p class="text-dark mt-2"><b> <span class="" style="color: #ABE63A">₹</span> {{ i.Price }}</b></p>
-                </div>
-                <div class="horizontal-card-footer">
-                  <a class="minus" href="{% url 'restaurant:remove_single' i.id table.id %}" > - </a>
-                  <a class="card-text status p-1" >0
-                      {% for j in cart %}
-
-                        {% if j.product.id == i.id %}
-
-                            {{ j.quantity }}
-
-                        {% endif %}
-
-                     {% endfor %}
-
-                  </a>
-
-                   <a class="plus" href="{% url 'restaurant:add_to_cart' i.id table.id %}" > + </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      {% endfor %}
-  </div>
-  <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
-      {% for i in menu %}
-      <div class="con">
-        <div class="w3-panel w3-card-4">
-
-          <div class="row">
-            <div class="col-lg-3">
-              <div class="horizontal-card">
-
-                <img src="{{ i.Dish_image.url }}" />
-                <div class="horizontal-card-body">
-
-                  <h4 class="card-title" >{{ i.Dish_Name }}</h4>
-                  <span class="card-text" style="font-size: 12px;">{{ i.Dish_Description }}</span>
-                    <p class="text-dark mt-2"><b> <span class="" style="color: #ABE63A">₹</span>{{ i.Price }}</b></p>
-                </div>
-                <div class="horizontal-card-footer">
-                  <a class="minus" href="{% url 'restaurant:remove_single' i.id table.id %}" > - </a>
-                  <a class="card-text status p-1" >0
-                      {% for j in cart %}
-
-                        {% if j.product.id == i.id %}
-
-                            {{ j.quantity }}
-
-                        {% endif %}
-
-                     {% endfor %}
-
-                  </a>
-
-                   <a class="plus" href="{% url 'restaurant:add_to_cart' i.id table.id %}" > + </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      {% endfor %}
-  </div>
--->
-</div>
-<br><br><br>
-<!-- fixed bottom -->
-<div class="foot">
-<nav class="nav">
-  <a href="{% url 'restaurant:menu' table.rest.id table.table_no %}" class="nav__link">
-    <i class="material-icons nav__icon">dashboard</i>
-    <span class="nav__text">MENU</span>
-  </a>
-  <a href="{% url 'restaurant:order_summary' table.rest.id table.table_no %}" class="nav__link nav__link--active">
-    <i class="material-icons nav__icon">person</i>
-    <span class="nav__text">MY ORDERS</span>
-  </a>
-  <a href="#" data-catid="{{ table.id }}" class="nav__link c_wait">
-    <i class="material-icons nav__icon">devices</i>
-    <span class="nav__text">CALL A WAITER</span>
-  </a>
-
-</nav>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-    <script type="text/javascript">
-    $('.c_wait').click(function(){
-    var catid;
-    catid = $(this).attr("data-catid");
-    $.ajax(
-    {
-        type:"GET",
-        url: "{% url 'restaurant:call_waiter' table.id %}",
-        data:{
-
-        },
-        success: function( data )
-        {
-        }
-     })
-});
-</script>
-
-</div>
-
-<!-- End Here -->
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-</body>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+      integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+      crossorigin="anonymous"
+    ></script>
+    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+  </body>
 </html>
-
-
-

@@ -12,8 +12,9 @@ from accounts.forms import RestaurantForm
 from accounts.models import User
 from restaurant.models import *
 from django.db.models import Count
+from itertools import chain
 
-
+# Create your views here.
 def t_price(request):
     restro = User.objects.get(id=request.user.id)
     res = User.objects.get(id=request.user.id)
@@ -21,24 +22,66 @@ def t_price(request):
                   start_date__date__day=datetime.datetime.today().day,
                   start_date__date__month=datetime.datetime.today().month,
                   start_date__date__year=datetime.datetime.today().year)
+
+    parcel_order_list = Parcel_Order.objects.filter(customer__rest=res.id, ordered=True, status="complete",
+                  start_date__date__day=datetime.datetime.today().day,
+                  start_date__date__month=datetime.datetime.today().month,
+                  start_date__date__year=datetime.datetime.today().year)
+                  
     order_list2 = Order.objects.filter(table_no__rest=res.id, ordered=True, status="complete",
                   start_date__date__month=datetime.datetime.today().month,
                   start_date__date__year=datetime.datetime.today().year)
+
+    parcel_order_list2 = Parcel_Order.objects.filter(customer__rest=res.id, ordered=True, status="complete",
+                  start_date__date__month=datetime.datetime.today().month,
+                  start_date__date__year=datetime.datetime.today().year)
+
     total_emp = User.objects.filter(rest_id=request.user, is_employee=True)
+
     total_earn = Order.objects.filter(
         table_no__rest_id=res.id, ordered=True)
+
+    parcel_total_earn = Parcel_Order.objects.filter(
+        customer__rest_id=res.id, ordered=True)
+
+    total_1 = 0
+    total_2 = 0
+
+    m_total_1 = 0
+    m_total_2 = 0
+
+    a_total_1 = 0
+    a_total_2 = 0
+
     total = 0
     m_total = 0
     a_total = 0
-    for i in order_list:
 
-        total += i.gst_total()
+    for i in order_list:
+        total_1 += i.gst_total()
+
+    for a in parcel_order_list:
+        total_2 += a.gst_total()
+
+    total = total_1 + total_2
+
 
     for j in order_list2:
-        m_total += j.gst_total()
+        m_total_1 += j.gst_total()
+
+    for b in parcel_order_list2:
+        m_total_2 += b.gst_total()
+
+    m_total = m_total_1 + m_total_2
+
 
     for k in total_earn:
-        a_total += k.gst_total()
+        a_total_1 += k.gst_total()
+
+    for c in parcel_total_earn:
+        a_total_2 += c.gst_total()
+
+    a_total = a_total_1 + a_total_2
 
 
     ### month bar chart ######
@@ -49,8 +92,11 @@ def t_price(request):
     calc = 0
 
     for i in month:
-        data = Order.objects.filter(table_no__rest=res.id, ordered=True, status="complete", start_date__date__month=i, start_date__date__year=2021)
+        data_1 = Order.objects.filter(table_no__rest=res.id, ordered=True, status="complete", start_date__date__month=i, start_date__date__year=2021)
+        data_2 = Parcel_Order.objects.filter(customer__rest=res.id, ordered=True, status="complete", start_date__date__month=i, start_date__date__year=2021)
         
+        data = list(chain(data_1, data_2))
+
         if not data:
             months_earn.append(0)
         else:
@@ -63,6 +109,10 @@ def t_price(request):
     ########## best seller bar chart ########
 
     best_data = OrderItem.objects.filter(table_no__rest=res.id, ordered=True, date__date__month=datetime.datetime.today().month,date__date__year=datetime.datetime.today().year)
+    # best_data = Parcel_OrderItem.objects.filter(customer__rest=res.id, ordered=True, date__date__month=datetime.datetime.today().month,date__date__year=datetime.datetime.today().year)
+    
+    # best_data = chain(best_data_1, best_data_2)
+
     
     dish_count = []
 
@@ -77,13 +127,17 @@ def t_price(request):
     ########## expenses ############
     year = datetime.datetime.today().year
     month = datetime.datetime.today().month
-    day_earn = OrderItem.objects.filter(table_no__rest_id=res.id, ordered=True, date__year=year,
-                                        date__month=month)
+    day_earn_1 = Order.objects.filter(table_no__rest_id=res.id, ordered=True, start_date__year=year,
+                                        start_date__month=month)
+    day_earn_2 = Parcel_Order.objects.filter(customer__rest_id=res.id, ordered=True, start_date__year=year,
+                                        start_date__month=month)
+
+    day_earn = list(chain(day_earn_1, day_earn_2))         
 
     day_total = 0
     
     for i in day_earn:
-        day_total += i.get_total_item_price()
+        day_total += i.gst_total()
                         
     day_expense = Expenses.objects.filter(res_id=res.id, Date__year=year, Date__month=month)
 
@@ -120,7 +174,6 @@ def t_price(request):
 
     final_Expense = sal + month_expense + expense_total
     
-
 
     return render(request, 'rest_admin/t_earn.html', {'total': total, 'm_total': m_total, 'total_emp': total_emp,
                                                       'a_total': a_total, 'restro': restro, 'months_earn':months_earn,'dish_name':dish_name,'dish_count':dish_count, 'final_earn':final_earn, 'final_Expense':final_Expense})
@@ -363,6 +416,8 @@ def table_delete(request, id):
     return HttpResponseRedirect(reverse('rest_admin:table_list'))
 
 
+
+
 def report(request):
     restro = User.objects.get(id=request.user.id)
     res = User.objects.get(id=request.user.id)
@@ -404,9 +459,11 @@ def today_order(request):
     restro = User.objects.get(id=request.user.id)
     res = User.objects.get(id=request.user.id)
     order_list = Order.objects.filter(table_no__rest_id=res.id, ordered=True,
-                                      ordered_date__day=datetime.datetime.today().day, status='Pending')
-    print(order_list)
-    return render(request, 'rest_admin/today_order.html', {'order_list': order_list, 'restro': restro})
+                 ordered_date__day=datetime.datetime.today().day, status='Pending')
+    parcel_order_list = Parcel_Order.objects.filter(customer__rest_id=res.id, ordered=True,
+                 ordered_date__day=datetime.datetime.today().day, status='Pending')
+   
+    return render(request, 'rest_admin/today_order.html', {'parcel_order_list': parcel_order_list, 'order_list': order_list, 'restro': restro})
 
 
 def order_complete(request, id):
@@ -449,10 +506,9 @@ class GeneratePdf(View):
             'cgst': list.table_no.rest.CGST,
             'date': datetime.datetime.today().date(),
             'time': datetime.datetime.today().time(),
-
-
             'Total': list.get_total(),
             'grand_total': list.gst_total(),
+            
         }
         pdf = render_to_pdf('rest_admin/invoice.html', data)
         return HttpResponse(pdf, content_type='application/pdf')
@@ -480,7 +536,6 @@ def update_details(request, id):
 
 
 def com_edit(request, id):
-
     instance = get_object_or_404(OrderItem, id=id)
 
     form = ComForm(request.POST or None, instance=instance)
@@ -554,7 +609,6 @@ def manager_delete(request, id):
 
 
 def add_day_expenses(request):
-    restro = User.objects.get(id=request.user.id)
     res = User.objects.get(id=request.user.id)
     if request.method == 'POST':
         form = ExpensesForm(request.POST, request.FILES)
@@ -568,13 +622,12 @@ def add_day_expenses(request):
             print(form.errors)
     else:
         form = ExpensesForm()
-    return render(request, 'rest_admin/add_day_expenses.html', {'form': form, 'restro': restro})
+    return render(request, 'rest_admin/add_day_expenses.html', {'form': form})
 
 
 def manage_day_expenses(request):
-    restro = User.objects.get(id=request.user.id)
     data = Expenses.objects.filter(res_id=request.user.id)
-    return render(request, 'rest_admin/manage_day_expenses.html', {'data': data, 'restro': restro})
+    return render(request, 'rest_admin/manage_day_expenses.html', {'data': data})
 
 
 def edit_expenses(request, id):
@@ -595,7 +648,6 @@ def edit_expenses(request, id):
 
 
 def add_month_expenses(request):
-    restro = User.objects.get(id=request.user.id)
     res = User.objects.get(id=request.user.id)
     if request.method == 'POST':
         form = PerMonthExpensesForm(request.POST, request.FILES)
@@ -627,18 +679,31 @@ def add_month_expenses(request):
             print(form.errors)
     else:
         form = PerMonthExpensesForm()
-    return render(request, 'rest_admin/add_month_expenses.html', {'form': form, 'restro': restro})
+    return render(request, 'rest_admin/add_month_expenses.html', {'form': form})
 
  
 def manage_month_expenses(request):
-    restro = User.objects.get(id=request.user.id)
     data = PerMonthExpenses.objects.filter(res_id=request.user.id)
 
-    return render(request, 'rest_admin/manage_month_expenses.html', {'data': data, 'restro': restro})
+    return render(request, 'rest_admin/manage_month_expenses.html', {'data': data})
+
+
+
+def edit_expenses(request, id):
+    restro = User.objects.get(id=request.user.id)
+    data = Expenses.objects.get(id=id)
+    
+    form = EditExpensesForm(request.POST or None, instance=data)
+
+    if form.is_valid():
+        form.save()
+        return redirect('rest_admin:user_profile')
+    else:
+        print(form.errors)
+    return render(request, 'rest_admin/update_u.html', {'form': form, 'restro': restro})
 
 
 def edit_month_expenses(request, id):
-    
     restro = User.objects.get(id=request.user.id)
     instance = get_object_or_404(PerMonthExpenses, id=id)
 
@@ -756,7 +821,6 @@ def balence_sheet(request):
 
 
 def add_assests(request):
-    restro = User.objects.get(id=request.user.id)
     res = User.objects.get(id=request.user.id)
     if request.method == 'POST':
         form = AssestsForm(request.POST, request.FILES)
@@ -770,14 +834,14 @@ def add_assests(request):
             print(form.errors)
     else:
         form = AssestsForm()
-    return render(request, 'rest_admin/add_assests.html', {'form': form, 'restro': restro})
+    return render(request, 'rest_admin/add_assests.html', {'form': form})
 
  
 def manage_assests(request):
-    restro = User.objects.get(id=request.user.id)
     data = Assests.objects.filter(res_id=request.user.id)
 
-    return render(request, 'rest_admin/manage_assets.html', {'data': data, 'restro': restro})
+    return render(request, 'rest_admin/manage_assets.html', {'data': data})
+
 
 
 def edit_assests(request, id):
@@ -816,10 +880,9 @@ def add_unit(request):
 
 
 def unit_list(request):
-    restro = User.objects.get(id=request.user.id)
     data = Unit.objects.filter(rest_id=request.user.id)
  
-    return render(request, 'rest_admin/unit_list.html', {'data': data, 'restro': restro})
+    return render(request, 'rest_admin/unit_list.html', {'data': data})
 
 def edit_unit(request, id):
     restro = User.objects.get(id=request.user.id)
@@ -867,10 +930,9 @@ def add_inventory(request):
 
 
 def inventory_list(request):
-    restro = User.objects.get(id=request.user.id)
     data = Inventory.objects.filter(rest_id=request.user.id)
     
-    return render(request, 'rest_admin/inventory_list.html', {'data': data, 'restro': restro})
+    return render(request, 'rest_admin/inventory_list.html', {'data': data})
 
 
 def edit_inventory(request, id):

@@ -32,7 +32,7 @@ class Table(models.Model):
             box_size=11,
         )
         qr_big.add_data(
-            f'http://127.0.0.1:8000/restaurants/menu/{self.rest.id}/{self.table_no}/'
+            f'http://127.0.0.1:8000/restaurant/menu/{self.rest.id}/{self.table_no}/'
         )
         qr_big.make()
 

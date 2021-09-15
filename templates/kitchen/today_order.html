@@ -76,4 +76,84 @@
       </div>
     </div>
   </div>
+
+  <div class="col-md-12">
+  <div class="card">
+    <div class="card-header card-header-primary">
+      <h4 class="card-title ">Today's Order For (Parcel)</h4>
+      <p class="card-category"> Manage Parcel Order From Here</p>
+    </div>  
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table">
+          <thead class=" text-primary">
+            <tr>
+              <th>
+                ID
+              </th>
+              <th>
+                Customer Name
+              </th>
+              <th>
+                Dish Name
+              </th>
+
+              <th>
+                Quantity
+              </th>
+              <th>
+                Comment
+              </th>
+              <th>
+                Status
+              </th>
+              <th>
+                Actions
+              </th>
+
+
+            </tr>
+          </thead>
+          <tbody>
+            {% for i in parcel_order_list %}
+            <tr>
+              <td>
+                {{ forloop.counter }}
+              </td>
+              <td>
+                {{ i.customer.name }}
+              </td>
+              <td>
+                {{ i.product.Dish_Name }}
+              </td>
+
+              <td>
+                {{ i.quantity }}
+              </td>
+              <td>
+                {{ i.comment }}
+              </td>
+              <td>
+                {{ i.status }}
+              </td>
+
+              <td>
+                {% if i.status == 'pending' %}
+                <a class="btn btn-primary" href="{% url 'kitchen:parcel_p_state' i.id  %}">PREPARING</a>
+                <a class="btn btn-primary" href="{% url 'kitchen:parcel_rts_state' i.id%}">READY TO SERVE</a>
+                {% elif i.status == 'Preparing' %}
+                <a class="btn btn-primary" href="{% url 'kitchen:parcel_rts_state' i.id%}">READY TO SERVE</a>
+                {% else %}
+                {% endif %}
+
+              </td>
+
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

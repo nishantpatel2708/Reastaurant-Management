@@ -10,6 +10,14 @@ from rest_admin.forms import *
 # Create your views here.
 
 
+def table_view(request):
+    restro = User.objects.get(id=request.user.rest_id)
+    res = User.objects.get(id=request.user.rest_id)
+    order_list = Order.objects.filter(table_no__rest_id=res.id, ordered=True,
+                                      ordered_date__day=datetime.datetime.today().day, status='Pending')
+    print("order_list>>>>>", order_list)
+    return render(request, 'kitchen/today_order.html', {'order_list': order_list, 'restro': restro})
+
 def category_list(request):
     user = User.objects.get(id=request.user.id)
     res = User.objects.get(id=request.user.rest_id)
@@ -47,7 +55,13 @@ def today_order(request):
                                           date__month=datetime.datetime.today().month,
                                           date__day=datetime.datetime.today().day)
 
-    return render(request, 'kitchen/today_order.html', {'order_list': order_list, 'res': res, 'user':user})
+    parcel_order_list = Parcel_OrderItem.objects.filter(customer__rest_id=res.id, ordered=False,
+                                          date__year=datetime.datetime.today().year,
+                                          date__month=datetime.datetime.today().month,
+                                          date__day=datetime.datetime.today().day)
+
+
+    return render(request, 'kitchen/today_order.html', {'parcel_order_list':parcel_order_list, 'order_list': order_list, 'res': res, 'user':user})
 
 
 def status_preparing(request, id):
@@ -125,3 +139,19 @@ def menu_state(request, id):
         item.save()
 
         return redirect('kitchen:menu_list')
+        
+
+def parcel_status_preparing(request, id):
+    o_state = Parcel_OrderItem.objects.get(id=id)
+    o_state.status = 'Preparing'
+    o_state.save()
+    return redirect('kitchen:t_order')
+
+
+def parcel_status_ready_to_serve(request, id):
+    o_state = Parcel_OrderItem.objects.get(id=id)
+
+    o_state.status = 'Ready To Serve'
+    o_state.ordered = True
+    o_state.save()
+    return redirect('kitchen:t_order')

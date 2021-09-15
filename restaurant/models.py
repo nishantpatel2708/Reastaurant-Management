@@ -71,16 +71,109 @@ class Order(models.Model):
 
         return round(net_price)
 
+
     def gst_total(self):
         total = 0
         for i in self.item.all():
             total += i.get_total_item_price()
 
-        if self.table_no.rest.discount != 0:
-            total -= self.table_no.rest.discount
-
         gst = (total*int(self.table_no.rest.SGST))/100
         cgst = (total*int(self.table_no.rest.CGST))/100
+
+        t = total + gst + cgst
+
+        if self.table_no.rest.discount != 0:
+            t -= self.table_no.rest.discount
+        
+
+        if t < 0:
+            t = 0
+        else:
+            t = t
+        return round(t)
+
+
+class Parcel_Customer(models.Model):
+    rest = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=120, blank=True, null=True)
+    mobile_no = models.CharField(max_length=10,
+                                 validators=[RegexValidator(r'^\d{9,10}$')])
+
+
+class Parcel_OrderItem(models.Model):
+    ordered = models.BooleanField(default=False)
+    product = models.ForeignKey(
+        MenuTable, on_delete=models.CASCADE, related_name='parcel_product')
+    quantity = models.PositiveIntegerField(default=1)
+    comment = models.CharField(max_length=120, blank=True, null=True)
+    date = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    status = models.CharField(max_length=30, default='pending')
+    customer = models.ForeignKey(
+        Parcel_Customer, on_delete=models.CASCADE, related_name='username')
+
+    def __str__(self):
+        return f"{self.quantity} of {self.product.Dish_Name}"
+
+    def get_total_item_price(self):
+        return self.quantity * self.product.Price
+
+
+class Parcel_Order(models.Model):
+    item = models.ManyToManyField(Parcel_OrderItem)
+    start_date = models.DateTimeField(auto_now_add=True)
+    ordered_date = models.DateTimeField()
+    comment = models.CharField(max_length=120, blank=True, null=True)
+    ordered = models.BooleanField(default=False)
+    status = models.CharField(max_length=100)
+    total_bill = models.IntegerField(null=True, blank=True)
+    customer = models.ForeignKey(
+        Parcel_Customer, on_delete=models.CASCADE, related_name='Order_username')
+
+
+    def get_total(self):
+        total = 0
+        for i in self.item.all():
+            total += i.get_total_item_price()
+
+        return total
+
+    def sgst_price(self):
+        total = 0
+        for i in self.item.all():
+            total += i.get_total_item_price()
+
+        sgst = (total * int(self.customer.rest.SGST)) / 100
+        return sgst
+
+    def cgst_price(self):
+        total = 0
+        for i in self.item.all():
+            total += i.get_total_item_price()
+
+        cgst = (total * int(self.customer.rest.SGST)) / 100
+        return cgst
+
+    def sc_total(self):
+        total = 0
+        for i in self.item.all():
+            total += i.get_total_item_price()
+
+        gst = (total*int(self.customer.rest.SGST))/100
+        cgst = (total*int(self.customer.rest.CGST))/100
+        net_price = total+gst+cgst
+
+        return round(net_price)
+
+    def gst_total(self):
+        total = 0
+        for i in self.item.all():
+            total += i.get_total_item_price()
+
+        if self.customer.rest.discount != 0:
+            total -= self.customer.rest.discount
+
+        gst = (total*int(self.customer.rest.SGST))/100
+        cgst = (total*int(self.customer.rest.CGST))/100
         net_price = total+gst+cgst
         if net_price < 0:
             net_price = 0

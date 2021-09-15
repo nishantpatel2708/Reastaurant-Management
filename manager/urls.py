@@ -33,6 +33,9 @@ urlpatterns = [
     path('table_list/', views.table_list, name='table_list'),
     path('com_u/<int:id>/', views.com_edit, name='com_u'),
     path('manual_order/<int:id>/', views.manual_order, name='manual_order'),
+    path('add_customer', views.add_customer, name='add_customer'),
+    path('manual_order_parcel/', views.manual_order_parcel, name='manual_order_parcel'),
+    path('parcel_pdf/<int:id>/', views.Parcel_GeneratePdf.as_view(), name='parcel_pdf'),
+    
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
