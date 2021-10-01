@@ -180,3 +180,34 @@ class Parcel_Order(models.Model):
         else:
             net_price = net_price
         return round(net_price)
+
+
+# create a table for waiter Call store the data. Create A signal For this model using post save and then send the message as payload to the group
+from django.db.models.signals import post_save
+from channels.layers import get_channel_layer 
+from asgiref.sync import async_to_sync
+from django.dispatch import receiver
+import json
+class CallWaiter(models.Model):
+    table = models.ForeignKey(
+        Table, on_delete=models.CASCADE, related_name='call_waiter')
+    Status = models.BooleanField(default=False)
+
+@receiver(post_save, sender=CallWaiter)
+def call_waiter_handler(sender, instance, created, **kwargs):
+    print('demo')
+    print(created)
+    if created:
+        channael_layer = get_channel_layer()
+        data = {}
+        data['rest'] = instance.table.rest_id
+
+        data['message'] = 'Table No. {} calling waiter'.format(instance.table.id)
+        
+        async_to_sync(channael_layer.group_send)(
+            'waiter_call_%s' % instance.table.rest_id, {
+                'type': 'call_wait',
+                'value': json.dumps(data)
+            }
+        )
+    

@@ -26,4 +26,5 @@ urlpatterns = [
     path('waiter/', include('waiter.urls')),
     path('kitchen/', include('kitchen.urls')),
     path('restaurant/', include('restaurant.urls')),
+    path('webpush/', include('webpush.urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

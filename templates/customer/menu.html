@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% load webpush_notifications %}
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -16,7 +17,7 @@
     />
 
     <link rel="stylesheet" href="{% static 'my_css/menu.css' %}" />
-
+    {% webpush_header %}
     <title>Menu</title>
   </head>
 
@@ -80,39 +81,118 @@
       <div class="tab-content" id="pills-tabContent">
         {% for j in cat %}
         <div
-          class="tab-pane fade{% if forloop.counter == 1 %} show active{% endif %}"
+          class="tab-pane fade{% if forloop.counter == 1 %} show active{% endif %} p-2"
           id="pills-{{ j.id }}"
           role="tabpanel"
           aria-labelledby="pills-{{ j.id }}-tab"
         >
-        <div class="row">
-
           {% for i in menu %} 
             {% if j.Category_Name == i.category.Category_Name %} 
-              
-                  <div class="col-6 col-md-3 " >
-                    <div class="card" >
-                      <img src="{{ i.Dish_image.url }}" class="card-img-top" alt="...">
-                      <div class="card-body">
-                        <h5 class="card-title">{{ i.Dish_Name }}</h5>
-                        <p class="card-text">{{ i.Dish_Description|truncatechars:15 }}</p>
-                      </div>
+               <div class="card float-left">
+                <div class="row ">
+                  <div class="col-5">
+                    <img class="card-img-top h-100" src="{{ i.Dish_image.url }}" alt="">
+                  </div>
+                  <div class="col-5">
+                    <div class="card-block p-2">
+                      <h6 class="card-title" style="margin-bottom: .2rem;">{{ i.Dish_Name }}</h6>
+                      <p class="card-text" style="margin-bottom: .2rem;">{{ i.Dish_Description|truncatechars:15 }}</p>
+                      <p class="card-text" style="margin-bottom: .2rem;"><span class="" >₹ </span>{{ i.Price }}</p>
                     </div>
                   </div>
-                  
-                
+                  <div class="col-2 ">
+                    <a
+                      style="text-decoration: none; display: block;"
+                      href="{% url 'restaurant:remove_single' i.id table.id %}"
+                    >
+                      <i class="material-icons" style="color:white; background-color:#3b9a75; margin-top:10px; border-radius: 5px">remove</i>
+                    </a>
+                    {% spaceless %}
+                    <a class="card-text quan status p-1"  style="color:black; text-decoration:none; font-weight:bold; display: block;">
+                    {% for j in cart %} 
+                        {% if j.product.id == i.id %}       
+                            {{ j.quantity }}
+                      {% endif %}
+                  {% endfor %}
+                   </a>
+                   {% endspaceless %}
+
+                    <a
+                      class="plus"
+                      style="text-decoration: none; display: block;"
+                      href="{% url 'restaurant:add_to_cart' i.id table.id %}"
+                    >
+                      <i class="material-icons" style="color:white; background-color:#3b9a75; margin-top:10px; border-radius: 5px"
+                      >add</i>
+                    </a>
+                  </div>
+                </div>
+              </div>
             {% endif %} 
           {% endfor %}
-   
-          </div>
         </div>
-
         {% endfor %}
-      </div>
     </section>
 
+    <section class="footer mt-5">
+      <nav class="nav">
+        <a href="{% url 'restaurant:menu' table.rest.id table.table_no %}" class="nav__link nav__link--active">
+          <i class="material-icons nav__icon">menu_book</i>
+          <span class="nav__text">MENU</span>
+        </a>
+        <a href="{% url 'restaurant:order_summary' table.rest.id table.table_no %}" class="nav__link ">
+          <i class="material-icons nav__icon">shopping_cart</i>
+          <span class="nav__text">MY ORDERS</span>
+        </a>
+        <a href="#" data-catid="{{ table.id }}" class="nav__link c_wait">
+          <i class="material-icons nav__icon">notifications_active</i>
+          <span class="nav__text">CALL A WAITER {% webpush_button %}</span>
+          
+        </a>
+
+      </nav>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+      <script type="text/javascript">
+        $(".c_wait").click(function () {
+          var catid;
+          catid = $(this).attr("data-catid");
+          $.ajax({
+            type: "GET",
+            url: "{% url 'restaurant:call_waiter' table.id %}",
+            data: {},
+            success: function (data) {},
+          });
+        });
+      </script>
+    </section>
     <!-- javascript added -->
 
+
+    <script>
+      let qw = document.getElementsByClassName('quan');
+      for (i=0;1<qw.length;i++){
+        if(qw[i].innerText.length===0){
+          qw[i].innerText += 0
+        }
+      }
+    </script>
+    <script>
+      var rest_id = '{{ table.rest.id }}'
+
+      var socket = new WebSocket('ws://localhost:8000/ws/waiter_call/'+rest_id)
+
+      socket.onopen = function(e){
+        console.log(e)
+      }
+
+      socket.onmessage = function(e){
+        console.log(e)
+      }
+
+      socket.onclose = function(e) {
+        
+      }
+    </script>
     <script
       src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
       integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"

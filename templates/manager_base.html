@@ -176,7 +176,7 @@
             </nav>
 
             <div class="container-fluid px-4">
-                
+                <div id="demo"></div>
                 {% block body %}
                     
                 {% endblock body %}
@@ -196,6 +196,34 @@
         toggleButton.onclick = function () {
             el.classList.toggle("toggled");
         };
+    </script>
+        <script>
+      var rest_id = "{{ restro.id }}";
+
+      var socket = new WebSocket(
+        "ws://localhost:8000/ws/waiter_call/" + rest_id
+      );
+
+      socket.onopen = function (e) {
+        console.log(e);
+      };
+
+      socket.onmessage = function (e) {
+        let ale = document.getElementById("demo");
+
+        let payload = JSON.parse(e.data);
+
+        ale.innerHTML += `
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>${payload.payload.message}</strong>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        `;
+      };
+
+      socket.onclose = function (e) {};
     </script>
 </body>
 

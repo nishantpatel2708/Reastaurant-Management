@@ -29,10 +29,20 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin', 'django.contrib.auth',
-    'django.contrib.contenttypes', 'django.contrib.sessions',
-    'django.contrib.messages', 'django.contrib.staticfiles', 'accounts',
-    'manager', 'rest_admin', 'kitchen', 'restaurant', 'waiter'
+    'channels',
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'accounts',
+    'manager',
+    'rest_admin',
+    'kitchen',
+    'restaurant',
+    'waiter',
+    'webpush',
 ]
 
 MIDDLEWARE = [
@@ -64,6 +74,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'reastaurant_management.wsgi.application'
+ASGI_APPLICATION = 'reastaurant_management.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -77,6 +88,15 @@ DATABASES = {
         'HOST': 'localhost',
         'PORT': '3306',
     }
+}
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
 }
 
 # Password validation
@@ -133,3 +153,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.User'
 LOGIN_URL = 'accounts:user_login'
+
+
+
+WEBPUSH_SETTINGS = {
+    "VAPID_PUBLIC_KEY": "BAiTkRwJahUX5WLfxIvGoyMcGwQL-ewnVBxZCYKoQ-h5AItdH66hR03BVQL_U3SJwAeYLAdYtKAW7LOChnDjVDI",
+    "VAPID_PRIVATE_KEY":"22ENEuiTDfWNnLoX-0xJAhNpMdqkzI8fIIb3WW3I008",
+    "VAPID_ADMIN_EMAIL": "lushtemayank21@gmail.com"
+}
+
+{
+    "BACKEND": "django_jinja.backend.Jinja2",
+    "OPTIONS": {
+      'extensions': ['webpush.jinja2.WebPushExtension'],
+    }
+},

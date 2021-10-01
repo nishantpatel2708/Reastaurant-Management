@@ -15,6 +15,9 @@ urlpatterns = [
     path('order_summary/<int:id>/<int:id2>/', views.order_summary, name='order_summary'),
     path('place_order/<int:id>/<int:id2>/', views.proceed_to_pay, name='place_order'),
     path('call_waiter/<int:id>/', views.call_a_waiter, name='call_waiter'),
-    path('com/<int:id>/', views.comment, name='com')
+    path('com/<int:id>/', views.comment, name='com'),
+    path('add_to_cart_order/<int:id>/<int:pk>/', views.add_to_cart_order, name='add_to_cart_order'),
+    path('remove_from_cart_order/<int:id>/<int:pk>/', views.remove_single_item_from_cart_order, name='remove_from_cart_order'),
+
 ] + static(settings.STATIC_URL,
                           document_root=settings.STATIC_ROOT)
