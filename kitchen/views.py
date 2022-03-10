@@ -50,12 +50,13 @@ def order_details(request, id):
 def today_order(request):
     user = User.objects.get(id=request.user.id)
     res = User.objects.get(id=request.user.rest_id)
-    order_list = OrderItem.objects.filter(table_no__rest_id=res.id, ordered=False,
+    order_list = OrderItem.objects.filter(table_no__rest_id=res.id, ordered=True,
                                           date__year=datetime.datetime.today().year,
                                           date__month=datetime.datetime.today().month,
                                           date__day=datetime.datetime.today().day)
+    print(order_list)
 
-    parcel_order_list = Parcel_OrderItem.objects.filter(customer__rest_id=res.id, ordered=False,
+    parcel_order_list = Parcel_OrderItem.objects.filter(customer__rest_id=res.id, ordered=True,
                                           date__year=datetime.datetime.today().year,
                                           date__month=datetime.datetime.today().month,
                                           date__day=datetime.datetime.today().day)

@@ -1,5 +1,0 @@
-{
-  "python.formatting.provider": "autopep8",
-  "python.defaultInterpreterPath": "D:/django_project/reastaurant_management/venv/Scripts/pythonw.exe",
-  "python.analysis.extraPaths": ["app", "another/path/etc"]
-}

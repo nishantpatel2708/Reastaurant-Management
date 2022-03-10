@@ -37,8 +37,7 @@ def add_to_cart(request, id, pk):
 
         if order.item.filter(product_id=item.pk, status='pending').exists() or order.item.filter(product_id=item.pk, status='Preparing'):
             order_item.quantity += 1
-            order_item.save()
-            order.item.add(order_item)
+            order_item.save()  
             messages.info(request, "Item Quantity was Updated")
             return redirect("restaurant:menu", id=table.rest.id, pk=table.table_no)
         else:

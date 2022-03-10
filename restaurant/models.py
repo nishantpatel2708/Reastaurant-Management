@@ -10,7 +10,7 @@ class OrderItem(models.Model):
     product = models.ForeignKey(
         MenuTable, on_delete=models.CASCADE, related_name='product')
     quantity = models.PositiveIntegerField(default=1)
-    comment = models.CharField(max_length=120, blank=True, null=True)
+    comment = models.CharField(max_length=120, blank=True, null=True)   
     table_no = models.ForeignKey(
         Table, on_delete=models.CASCADE, related_name='table_id')
     date = models.DateTimeField(auto_now_add=True, null=True, blank=True)
